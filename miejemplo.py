@@ -15,8 +15,8 @@ for i in range (0,dim1):
             final[i,j]=0
 
 parte1 = final[:dim1/2,:dim2/2]
-parte2 = final[dim1/2:,:dim2/2]
 parte3 = final[:dim1/2,dim2/2:]
+parte2 = final[dim1/2:,:dim2/2]
 parte4 = final[dim1/2:,dim2/2:]
 cv2.imshow('Final',final)
 cv2.imshow('parte1',parte1)
