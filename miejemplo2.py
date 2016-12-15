@@ -12,8 +12,8 @@ def calculaAngulo(imagen):
 	imSz = imagen.shape
 	hsv = cv2.cvtColor(imagen, cv2.COLOR_BGR2HSV)
 
-	rojo_bajos = np.array([0,100,100])
-	rojo_altos = np.array([20,255,255])
+	rojo_bajos = np.array([168,100,100])
+	rojo_altos = np.array([188,255,255])
 
 	amarillo_bajos = np.array([20,100,100])
 	amarillo_altos = np.array([40,255,255])
@@ -61,8 +61,13 @@ def calculaAngulo(imagen):
 
 	angulocarro = angulo(vectorcarro[1],vectorcarro[0])
 	angulodestino = angulo(vectordestino[1],vectordestino[0])
-
 	angulodesv = angulocarro - angulodestino
+
+	if angulodesv > 180:
+     		angulodesv = angulodesv - 360
+	if angulodesv < -180:
+			angulodesv = 360 + angulodesv
+
 	d = np.sqrt((xm-xc)**2 + (ym-yc)**2)
 
 	return angulodesv,d
