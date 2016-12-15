@@ -10,7 +10,7 @@ import espino
 import time
 
 port = 8888
-address = '192.168.1.15'
+address = '192.168.1.7'
 ip = '192.168.1.13'
 
 argc = len (sys.argv)
@@ -24,7 +24,8 @@ rF=remoteFrame(address, port)
 cv2.namedWindow('MyWindow')
 
 while cv2.waitKey(1) == -1: 
-
+#	imagen = cv2.imread('prueba.png')
 	imagen = rF.getFrame()	
-	ang,d = calculaAngulo(imagen)
+	ang,d,bandera = calculaAngulo(imagen)
 	cv2.imshow('MyWindow', imagen)
+	cv2.imwrite('error.png',imagen)

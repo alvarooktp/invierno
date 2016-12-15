@@ -23,23 +23,27 @@ rF=remoteFrame(address, port)
 
 cv2.namedWindow('MyWindow')
 flag = 0
+
+espino.avanzar(ip,400,500)
+
 while cv2.waitKey(1) == -1 and flag == 0: 
 #	imagen = cv2.imread('prueba3.png')
 	imagen = rF.getFrame()
-	ang,d = calculaAngulo(imagen)
+	ang,d,bandera = calculaAngulo(imagen)
 	print ang
 	tiempo = ang*(15)
-	if d < 50:
-		flag = 1
-	else:
-		if ang < 20 and ang > -20:
-			espino.avanzar(ip,400,500)
+	if bandera == 1:
+		if d < 50:
+			flag = 1
 		else:
-			if ang < 0:
-				tiempo = -tiempo
-				espino.izquierda(ip,150,tiempo)
+			if ang < 20 and ang > -20:
+				espino.avanzar(ip,400,500)
 			else:
-				espino.derecha(ip,150,tiempo)
+				if ang < 0:
+					tiempo = -tiempo
+					espino.izquierda(ip,150,tiempo)
+				else:
+					espino.derecha(ip,150,tiempo)
 	cv2.imshow('MyWindow', imagen)
 	
 espino.avanzar(ip,400,500)

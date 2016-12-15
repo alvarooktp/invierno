@@ -8,6 +8,8 @@ from angulo import *
 
 def calculaAngulo(imagen):
 
+	bandera = 1
+	mensaje = 'No encontre '
 	final2 = imagen.copy()
 	imSz = imagen.shape
 	hsv = cv2.cvtColor(imagen, cv2.COLOR_BGR2HSV)
@@ -31,43 +33,63 @@ def calculaAngulo(imagen):
 
 	ret,thresh = cv2.threshold(rojomask,127,255,0)
 	contours,hierarchy = cv2.findContours(thresh, 1, 2)
-	cnt = contours[0]
-	(xr,yr),radius = cv2.minEnclosingCircle(cnt)
-	cv2.rectangle(imagen, (int(xr), int(yr)), (int(xr)+2, int(yr)+2),(0,0,255), 2)
+
+	if len(contours) != 0:
+		cnt = contours[0]
+		(xr,yr),radius = cv2.minEnclosingCircle(cnt)
+		cv2.rectangle(imagen, (int(xr), int(yr)), (int(xr)+2, int(yr)+2),(0,0,255), 2)
+	else:
+		bandera = 0
+		mensaje = mensaje + 'rojo '
 
 	ret,thresh = cv2.threshold(amarillomask,127,255,0)
 	contours,hierarchy = cv2.findContours(thresh, 1, 2)
-	cnt = contours[0]
-	(xa,ya),radius = cv2.minEnclosingCircle(cnt)
-	cv2.rectangle(imagen, (int(xa), int(ya)), (int(xa)+2, int(ya)+2),(0,0,255), 2)
 
-	xc = (xr+xa)/2
-	yc = (yr+ya)/2
-	cv2.rectangle(imagen, (int(xc), int(yc)), (int(xc)+2, int(yc)+2),(0,0,255), 2)
+	if len(contours) != 0:
+		cnt = contours[0]
+		(xa,ya),radius = cv2.minEnclosingCircle(cnt)
+		cv2.rectangle(imagen, (int(xa), int(ya)), (int(xa)+2, int(ya)+2),(0,0,255), 2)
+	else:
+		bandera = 0
+		mensaje = mensaje + 'amarillo '
+
+	if bandera == 1:
+		xc = (xr+xa)/2
+		yc = (yr+ya)/2
+		cv2.rectangle(imagen, (int(xc), int(yc)), (int(xc)+2, int(yc)+2),(0,0,255), 2)
 
 	ret,thresh = cv2.threshold(magentamask,127,255,0)
 	contours,hierarchy = cv2.findContours(thresh, 1, 2)
-	cnt = contours[0]
-	(xm,ym),radius = cv2.minEnclosingCircle(cnt)
-	cv2.rectangle(imagen, (int(xm), int(ym)), (int(xm)+2, int(ym)+2),(0,0,255), 2)
 
-	yr=imSz[0]-yr
-	ya=imSz[0]-ya
-	yc=imSz[0]-yc
-	ym=imSz[0]-ym
+	if len(contours) != 0:
+		cnt = contours[0]
+		(xm,ym),radius = cv2.minEnclosingCircle(cnt)
+		cv2.rectangle(imagen, (int(xm), int(ym)), (int(xm)+2, int(ym)+2),(0,0,255), 2)
+	else:
+		bandera = 0
+		mensaje = mensaje + 'magenta '
 
-	vectorcarro=[xr-xa,yr-ya]
-	vectordestino=[xm-xc,ym-yc]
+	if bandera == 1:
+		yr=imSz[0]-yr
+		ya=imSz[0]-ya
+		yc=imSz[0]-yc
+		ym=imSz[0]-ym
 
-	angulocarro = angulo(vectorcarro[1],vectorcarro[0])
-	angulodestino = angulo(vectordestino[1],vectordestino[0])
-	angulodesv = angulocarro - angulodestino
+		vectorcarro=[xr-xa,yr-ya]
+		vectordestino=[xm-xc,ym-yc]
 
-	if angulodesv > 180:
-     		angulodesv = angulodesv - 360
-	if angulodesv < -180:
-			angulodesv = 360 + angulodesv
+		angulocarro = angulo(vectorcarro[1],vectorcarro[0])
+		angulodestino = angulo(vectordestino[1],vectordestino[0])
+		angulodesv = angulocarro - angulodestino
 
-	d = np.sqrt((xm-xc)**2 + (ym-yc)**2)
+		if angulodesv > 180:
+				angulodesv = angulodesv - 360
+		if angulodesv < -180:
+				angulodesv = 360 + angulodesv
 
-	return angulodesv,d
+		d = np.sqrt((xm-xc)**2 + (ym-yc)**2)
+
+		return angulodesv,d,bandera
+	else:
+		print mensaje
+		return 0,0,bandera
