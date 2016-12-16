@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
@@ -5,10 +6,22 @@ import numpy as np
 import cv2
 import math
 from angulo import *
-
+import time
+def sumarMatriz (matriz):
+	suma = 0
+	dim1, dim2 = matriz.shape
+	for i in range (0,dim1):
+	    for j in range (0,dim2):
+			suma = suma + matriz[i][j]
+			if suma>=1:
+				return 1
+	return suma
 def calculaAngulo(imagen):
 
 	bandera = 1
+	yc = 0
+	xc = 0
+	suma = 0
 	mensaje = 'No encontre '
 	final2 = imagen.copy()
 	imSz = imagen.shape
@@ -65,10 +78,17 @@ def calculaAngulo(imagen):
 		cnt = contours[0]
 		(xm,ym),radius = cv2.minEnclosingCircle(cnt)
 		cv2.rectangle(imagen, (int(xm), int(ym)), (int(xm)+2, int(ym)+2),(0,0,255), 2)
+		dim1, dim2,dim3 = imagen.shape
+		#fondo = np.zeros((dim1,dim2))
+		fondo = 0*imagen
+		cv2.line(fondo,(int(xm),int(ym)),(int(xc),int(yc)),(0,255,0),2)
+		cv2.imshow('Linea',fondo)
+
+		suma = sumarMatriz(np.multiply(fondo[:,:,1],azulmask))
+		#print suma
 	else:
 		bandera = 0
 		mensaje = mensaje + 'magenta '
-
 	if bandera == 1:
 		yr=imSz[0]-yr
 		ya=imSz[0]-ya
@@ -81,7 +101,6 @@ def calculaAngulo(imagen):
 		angulocarro = angulo(vectorcarro[1],vectorcarro[0])
 		angulodestino = angulo(vectordestino[1],vectordestino[0])
 		angulodesv = angulocarro - angulodestino
-
 		if angulodesv > 180:
 				angulodesv = angulodesv - 360
 		if angulodesv < -180:
@@ -89,7 +108,7 @@ def calculaAngulo(imagen):
 
 		d = np.sqrt((xm-xc)**2 + (ym-yc)**2)
 
-		return angulodesv,d,bandera
+		return angulodesv,d,bandera,suma
 	else:
 		print mensaje
-		return 0,0,bandera
+		return 0,0,bandera,-1
